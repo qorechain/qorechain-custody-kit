@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: Apache-2.0
+[package]
+name = "qorechain-custody-kit"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+authors = ["QoreChain Association"]
+description = "Reference validators and helpers for custodians integrating QoreChain, built on QoreSign. Not published."
+repository = "https://github.com/qorechain/qorechain-custody-kit"
+publish = false
+
+[lib]
+name = "custody_kit"
+path = "src/lib.rs"
+
+[dependencies]
+qorechain-qoresign = "=0.1.0"
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.154"
+sha2 = "=0.10.9"
+hex = "=0.4.3"
+
+[dev-dependencies]
+base64 = "=0.22.1"
+# HTTP for the live tests and the example only, over native-tls with the
+# system root certificates (no bundled root-certificate crate).
+ureq = { version = "=2.12.1", default-features = false, features = ["native-tls"] }
+native-tls = "=0.2.18"
+
+[[example]]
+name = "custody-kit"
+path = "examples/custody-kit.rs"
