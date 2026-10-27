@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: Apache-2.0
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qorechain-custody-kit"
+version = "0.1.0"
+description = "Reference validators and helpers for custodians integrating QoreChain. Not published."
+readme = "README.md"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+authors = [{ name = "QoreChain Association" }]
+dependencies = []
+classifiers = ["Private :: Do Not Upload"]
+
+[project.optional-dependencies]
+# verify_tx needs the ML-DSA-87 and secp256k1 verification of QoreSign.
+verify = ["qorechain-qoresign==0.1.1"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+qorechain_custody_kit = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
