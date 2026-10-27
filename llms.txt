@@ -1,0 +1,24 @@
+# QoreChain custody kit
+
+> Integration guide, reference code (TypeScript, Python, Go, Rust, Java) and test vectors for custodians and exchanges on QoreChain. Built on QoreSign. Apache-2.0.
+
+Lanes: native (Cosmos SDK) = secp256k1 SIGN_MODE_DIRECT plus ML-DSA-87 (FIPS 204) layer /qorechain.pqc.v1.PQCHybridSignature, required; an account with a registered key has no classical path; a keyless account may only send MsgRegisterPQCKey / MsgRegisterPQCKeyV2 / MsgMigratePQCKey / MsgUnjail classically. EVM = secp256k1 Ethereum transactions admitted only with a registered ML-DSA-87 key and a live window (MsgOpenEVMWindow: blocks <= 17280, max_txs <= 1000, max_value in uqor counting value plus max fee, native_only, allowed_targets <= 16); eth_call / eth_estimateGas need no window. SVM = not open for transactions.
+Networks: mainnet qorechain-vladi (REST https://api.qore.host, RPC https://rpc.qore.host, EVM https://evm.qore.host chain id 9801); testnet qorechain-diana (REST https://api-testnet.qore.host, RPC https://rpc-testnet.qore.host, EVM https://evm-testnet.qore.host chain id 9800). Bech32 qor / qorvaloper; coin types 118 (secp256k1) and 60 (eth-native); denom uqor, 6 decimals (18 on EVM); minimum gas price 0.1 uqor; unbonding 21 days; one-block finality.
+
+## Docs
+- [Signing per lane](docs/signing.md): exemptions, sign-bytes v1/v2, sizes, registration, EVM windows
+- [Addresses and derivation](docs/addresses.md): qor1/0x same 20 bytes, coin types, canonical ML-DSA-87 derivation, checksums
+- [Deposit detection](docs/deposits.md): transfer.recipient query, credit rules, failed EVM txs with code 0, gas refunds
+- [Withdrawals](docs/withdrawals.md): simulate; gas limit ceil(gas_used*1.02)+2000 on v3.2.5+, ceil((gas_used+40000)*1.4) before; fee = gas_limit * gas_price
+- [Staking](docs/staking.md): delegate/undelegate/redelegate/rewards; stakingtier MsgLockDelegation / MsgUnlockEarly / MsgClaimBonus
+- [Errors](docs/errors.md), [Key management](docs/key-management.md), [Testnet](docs/testnet.md), [Checklist](docs/checklist.md), [FAQ](docs/faq.md)
+
+## Code
+- validateAddress(input, {allow, requireEip55}) -> {valid, kind, format, checksum, bech32, hex} | {valid:false, error}
+- decodeTx(txBytes) -> messages, memo, fee, signers, pqcLayers, txHash
+- verifyTx({txBytes, chainId, accountNumber, classicalPublicKey, classicalKeyType, pqPublicKey}) -> {valid, classical, signerKey, pq}
+- buildDepositQuery({address, minHeight, maxHeight, event, page, limit, orderBy}) -> REST path; extractDeposits(txResponse, address, {denom}) -> entries with creditable/reason
+- Error codes: MALFORMED_TX, UNKNOWN_FIELD, INVALID_ARGUMENT; address codes EMPTY, WHITESPACE, BAD_HEX, BAD_EIP55, NO_CHECKSUM, MIXED_CASE, BAD_BECH32, BAD_CHECKSUM, WRONG_PREFIX, BAD_LENGTH, KIND_NOT_ALLOWED
+
+## Vectors
+- [vectors/README.md](vectors/README.md): custody-v1.json; QoreSign qoresign-v1.json by reference (tag v0.1.0, SHA-256 checked)
