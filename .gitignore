@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+target/
+build/
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
+.DS_Store
+.idea/
+.vscode/
+.env
+.env.*
+# Fetched by scripts/fetch-qoresign-vectors.sh; reused by reference, not copied.
+vectors/qoresign-v1.json

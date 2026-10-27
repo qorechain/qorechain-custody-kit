@@ -1,0 +1,42 @@
+QoreChain custody kit
+Copyright 2026 QoreChain Association
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+The reference code depends on the following third-party software, each under
+its own license. Nothing below is redistributed in this repository.
+
+TypeScript (code/ts)
+  @qorechain/qoresign       Apache-2.0  QoreChain Association
+  @noble/hashes             MIT         Paul Miller
+  (development: typescript Apache-2.0, vitest MIT, @types/node MIT)
+
+Go (code/go)
+  github.com/qorechain/qoresign/go           Apache-2.0  QoreChain Association
+  github.com/qorechain/qorechain-pqc/go      Apache-2.0  QoreChain Association
+  github.com/cloudflare/circl                BSD-3-Clause
+  github.com/decred/dcrd/dcrec/secp256k1/v4  ISC
+  github.com/cosmos/go-bip39                 MIT
+  github.com/cosmos/btcutil                  ISC
+  golang.org/x/crypto, golang.org/x/sys      BSD-3-Clause
+
+Rust (code/rust)
+  qorechain-qoresign        Apache-2.0  QoreChain Association
+  serde, serde_json, sha2, hex   MIT OR Apache-2.0
+  (development: ureq, native-tls, base64   MIT OR Apache-2.0)
+  Transitive dependencies of qorechain-qoresign include bip39 and its
+  rust-bitcoin helpers (CC0-1.0) and unicode-normalization / unicode-ident
+  (Unicode-3.0); see QoreSign's NOTICE. The development HTTP client pulls in
+  url/idna (Unicode-3.0 data crates) and openssl (Apache-2.0) / openssl-sys (MIT)
+  on Linux.
+
+Java (code/java)
+  io.github.qorechain:qoresign        Apache-2.0  QoreChain Association
+  org.jetbrains.kotlin:kotlin-stdlib  Apache-2.0  (via qoresign)
+  net.java.dev.jna:jna                Apache-2.0 (dual-licensed Apache-2.0 / LGPL-2.1, used under Apache-2.0; via qoresign)
+  com.google.code.gson:gson           Apache-2.0
+  (development: org.testng:testng Apache-2.0, jcommander Apache-2.0, slf4j-api MIT, webjars jquery MIT)
+
+Python (code/python)
+  No runtime dependency. verify_tx uses qorechain-qoresign (Apache-2.0) when it
+  is installed. (development: pytest MIT and its dependencies, setuptools MIT)
