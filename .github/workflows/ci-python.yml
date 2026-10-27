@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: Apache-2.0
+name: ci-python
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.9", "3.13"]
+    defaults:
+      run:
+        working-directory: code/python
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -r requirements-dev.txt
+      - name: QoreSign vectors (by reference)
+        run: ../../scripts/fetch-qoresign-vectors.sh
+      # verify_tx needs qorechain-qoresign 0.1.1; its tests are skipped until it is on PyPI.
+      - run: python -m pytest

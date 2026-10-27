@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: Apache-2.0
+name: ci-java
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: code/java
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: QoreSign vectors (by reference)
+        run: ../../scripts/fetch-qoresign-vectors.sh
+      - run: mvn -B test
