@@ -1,0 +1,33 @@
+{
+  "name": "@qorechain/custody-kit-examples",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reference validators and helpers for custodians integrating QoreChain, built on QoreSign. Not published.",
+  "license": "Apache-2.0",
+  "author": "QoreChain Association",
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "bin": {
+    "custody-kit": "./dist/src/cli.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "vectors": "node scripts/gen-vectors.mjs",
+    "cli": "node dist/src/cli.js"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.4.0",
+    "@qorechain/qoresign": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}
