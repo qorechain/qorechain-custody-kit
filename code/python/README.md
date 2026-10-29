@@ -25,7 +25,7 @@ cd code/python
 python -m venv .venv && . .venv/bin/activate
 pip install -r requirements-dev.txt
 pytest                                   # vectors; verify_tx tests skip without qoresign
-pip install qorechain-qoresign==0.1.1    # once published: runs the verify_tx tests too
+pip install qorechain-qoresign==0.1.1    # runs the verify_tx tests too
 QORE_LIVE_TEST=1 pytest tests/test_live.py   # read-only testnet checks
 ```
 

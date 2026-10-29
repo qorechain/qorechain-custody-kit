@@ -38,6 +38,28 @@ Each language offers the same four things, with the same results and error codes
 
 Plus a small command-line example per language (`validate`, `decode`, `verify`, `deposits`).
 
+## Quick start
+
+The reference code is meant to be read and copied; each language folder runs as is. With Go (reads use the testnet REST endpoint; set `QORE_REST` for another one, your own node in production):
+
+```bash
+git clone https://github.com/qorechain/qorechain-custody-kit
+cd qorechain-custody-kit/code/go
+
+# Validate a deposit address (offline)
+go run ./cmd/custody-kit validate 0x9858EfFD232B4033E47d90003D41EC34EcaEda94
+
+# Decode a signed transaction, then verify both signatures before broadcast
+go run ./cmd/custody-kit decode <tx hex or base64>
+go run ./cmd/custody-kit verify <tx> --chain-id qorechain-diana --account-number <n> \
+  --pubkey <33-byte hex> --pq-pubkey <2592-byte hex>
+
+# Scan incoming transfers to an address in a height range (read-only)
+go run ./cmd/custody-kit deposits qor1... --from-height <h1> --to-height <h2>
+```
+
+The same four commands exist in TypeScript, Python, Rust and Java; see each `code/<language>/README.md`. Start with [the checklist](docs/checklist.md), then [signing per lane](docs/signing.md).
+
 ## Tests
 
 Every language checks [`vectors/custody-v1.json`](vectors/custody-v1.json). Run `scripts/fetch-qoresign-vectors.sh` first to also check the QoreSign hybrid-transaction vectors. With `QORE_LIVE_TEST=1`, read-only checks run against the testnet (staking parameters, a deposit query for a recent transfer); `QORE_REST` points them at another endpoint. Commands are in each `code/<language>/README.md` and in [CONTRIBUTING.md](CONTRIBUTING.md).
