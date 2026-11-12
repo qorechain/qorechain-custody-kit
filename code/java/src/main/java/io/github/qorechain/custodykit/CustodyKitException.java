@@ -7,7 +7,8 @@ package io.github.qorechain.custodykit;
  * <ul>
  *   <li>{@code MALFORMED_TX}: the bytes are not a well-formed transaction.</li>
  *   <li>{@code UNKNOWN_FIELD}: a field the decoder does not know, in a structure it decodes
- *       strictly. The network refuses such transactions too.</li>
+ *       strictly. It is not proof the network refuses the transaction: a field added by a newer
+ *       chain version stays unknown until the kit learns it.</li>
  *   <li>{@code INVALID_ARGUMENT}: a caller error (bad option, bad address for a query).</li>
  * </ul>
  */

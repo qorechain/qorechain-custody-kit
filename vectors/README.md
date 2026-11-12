@@ -11,7 +11,7 @@ Every key is derived from the public BIP-39 test mnemonic (`abandon ... about`).
 |---|---|
 | `addresses.valid`, `addresses.invalid` | inputs to `validateAddress` with options, and the expected result or error code (one case per code) |
 | `transactions` | a hybrid-signed `MsgDelegate` from a `secp256k1` account and a hybrid-signed `MsgOpenEVMWindow` from an eth-native account: bytes, keys, the expected `decodeTx` output, and `verifyCases` (registered key, classical only, wrong ML-DSA-87 key, wrong account number, wrong chain id, wrong secp256k1 key) |
-| `messages` | single messages (staking, staking tier, window with targets, multi-send, an unknown type) and their expected decoding |
+| `messages` | single messages (staking, staking tier, window with targets, window with every field 5 to 9 set, multi-send, an unknown type) and their expected decoding |
 | `malformed` | transactions `decodeTx` must refuse, with the error code |
 | `depositQueries`, `depositQueryErrors` | options of `buildDepositQuery` and the exact expected path, or the error code |
 | `deposits` | a `tx_response`, an address and the expected `extractDeposits` entries |

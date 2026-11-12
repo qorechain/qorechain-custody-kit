@@ -87,7 +87,10 @@ public final class TxDecoder {
                     new Spec(3, "max_txs", Kind.UINT),
                     new Spec(4, "max_value", Kind.STRING),
                     new Spec(5, "native_only", Kind.BOOL),
-                    new Spec(6, "allowed_targets", Kind.STRINGS))),
+                    new Spec(6, "allowed_targets", Kind.STRINGS),
+                    new Spec(7, "validators", Kind.STRINGS),
+                    new Spec(8, "staking_validators", Kind.STRINGS),
+                    new Spec(9, "ibc_receivers", Kind.STRINGS))),
             Map.entry("/qorechain.pqc.v1.MsgCloseEVMWindow", List.of(
                     new Spec(1, "sender", Kind.STRING))));
 

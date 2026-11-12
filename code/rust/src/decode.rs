@@ -191,6 +191,9 @@ const KNOWN_MESSAGES: &[(&str, Layout)] = &[
             (4, "max_value", Kind::Str),
             (5, "native_only", Kind::Bool),
             (6, "allowed_targets", Kind::Strings),
+            (7, "validators", Kind::Strings),
+            (8, "staking_validators", Kind::Strings),
+            (9, "ibc_receivers", Kind::Strings),
         ],
     ),
     (

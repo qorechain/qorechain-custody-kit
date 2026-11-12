@@ -81,8 +81,10 @@ The window is opened by a native-lane transaction, which is hybrid-signed like a
 
 | Message | Fields |
 |---|---|
-| `/qorechain.pqc.v1.MsgOpenEVMWindow` | `sender` (`qor1` form), `blocks` (1 to 17,280), `max_txs` (1 to 1,000), `max_value` (uqor, > 0), `native_only` (bool, optional), `allowed_targets` (up to 16 `0x` addresses, optional) |
+| `/qorechain.pqc.v1.MsgOpenEVMWindow` | `sender` (field 1, `qor1` form), `blocks` (2, 1 to 17,280), `max_txs` (3, 1 to 1,000), `max_value` (4, uqor, > 0), `native_only` (5, bool, optional), `allowed_targets` (6, `0x` 20-byte addresses, optional), `validators` (7, `0x` 20-byte addresses of signature validator contracts, optional), `staking_validators` (8, `qorvaloper` addresses, optional), `ibc_receivers` (9, `<source channel>/<receiver>`, 1 to 256 characters, no whitespace or comma, text on both sides of the `/`, optional) |
 | `/qorechain.pqc.v1.MsgCloseEVMWindow` | `sender`: revokes the window in the same block |
+
+Each list (fields 6 to 9) holds at most 16 entries, with no duplicates. Fields 7 to 9 are accepted from chain v3.2.8 (live on the testnet); a network that has not reached v3.2.8 does not honour them, so check the release before relying on them.
 
 Read the state with `GET /qorechain/pqc/v1/evm_window/{address}` (`found`, `live`, `expiry_height`, `used_txs`, `used_value`, `remaining_*`, scope). The QoreChain SDK has composers (`openEvmWindowMsg`, `closeEvmWindowMsg`) and a refusal classifier; see its [`evm-window.ts`](https://github.com/qorechain/qorechain-sdk/blob/main/packages/ts/src/pqc/evm-window.ts).
 
@@ -93,7 +95,8 @@ Rules that matter for a hot wallet:
 - **`blocks` is a block count.** 17,280 blocks is about 15 hours on mainnet (about 3.1 s per block) and about 6 hours on the testnet (about 1.3 s), measured on 27 October 2026.
 - **Opening a window advances the account's sequence, which is also its EVM nonce.** Open, then read the nonce, then sign EVM transactions.
 - **Scope.** `native_only` admits plain QOR transfers only (no calldata, no contract creation, no recipient with code, no EIP-7702 authorizations). `allowed_targets` admits listed recipients only. A hot wallet that only pays out QOR should open `native_only` windows. Token transfers carry value zero, so without a scope a stolen secp256k1 key could move tokens while the window lasts.
-- **Value-moving precompiles** (staking `0x…0800`, distribution `0x…0801`, ICS-20 `0x…0802`, governance `0x…0805`) are reachable through a window only when listed in `allowed_targets`. This rule ships with v3.2.5: active on the testnet, pending on mainnet. On mainnet no static precompile is active today (`active_static_precompiles` is empty). Stake on the native lane (see [staking](staking.md)).
+- **Precompiles through a window.** From v3.2.8 (live on the testnet, pending on mainnet), the standard EVM precompile methods are refused through a window unless one of its lists admits them. Staking delegate and redelegate need the validator in `staking_validators`; ICS-20 transfers need the `<source channel>/<receiver>` pair in `ibc_receivers`. Undelegate, governance votes and withdraw-address changes are always refused through a window: send them as a post-quantum signed Cosmos transaction (native lane). Before v3.2.8 the rule from v3.2.5 applies: value-moving precompiles (staking `0x…0800`, distribution `0x…0801`, ICS-20 `0x…0802`, governance `0x…0805`) are reachable through a window only when listed in `allowed_targets`. On mainnet no static precompile is active today (`active_static_precompiles` is empty). Stake on the native lane (see [staking](staking.md)).
+- **Key changes close the window.** From v3.2.8, rotating, migrating or re-registering the account's ML-DSA-87 key (`MsgRotatePQCKey`, `MsgMigratePQCKey`, or a `MsgRegisterPQCKeyV2` that replaces the key) closes the account's EVM window and revokes its EIP-7702 consent. Open a new window afterwards (and record a new consent if you use EIP-7702).
 
 Refusals are codespace `pqc`: 26 (no window, or no registered key; read the message text), 27 (window exhausted or out of scope), 28 (invalid window parameters).
 

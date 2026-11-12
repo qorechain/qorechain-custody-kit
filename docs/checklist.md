@@ -20,7 +20,7 @@ A list of what an integration needs to have in place. It describes the network's
 - [ ] ML-DSA-87 key for every hot address, in an HSM or a key manager, under the same approval policy as the secp256k1 key.
 - [ ] Key registered with `MsgRegisterPQCKeyV2` (with proof of possession) before the first withdrawal; registration confirmed by query.
 - [ ] Backup and restore of both keys tested on the testnet.
-- [ ] Rotation procedure (`MsgRotatePQCKey`) written and tested.
+- [ ] Rotation procedure (`MsgRotatePQCKey`) written and tested, including reopening the EVM window afterwards (from v3.2.8 a key change closes it).
 
 ## Deposits
 

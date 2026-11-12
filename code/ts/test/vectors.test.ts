@@ -116,3 +116,69 @@ describe.skipIf(!existsSync(qsPath))("QoreSign vectors (by reference)", () => {
     }
   });
 });
+
+// MsgOpenEVMWindow with every optional field (5 to 9) set, encoded field by
+// field here rather than read from the vectors file.
+describe("MsgOpenEVMWindow fields 5 to 9", () => {
+  const TYPE = "/qorechain.pqc.v1.MsgOpenEVMWindow";
+  const varint = (v: number): number[] => {
+    const out: number[] = [];
+    do {
+      let b = v & 0x7f;
+      v = Math.floor(v / 128);
+      if (v) b |= 0x80;
+      out.push(b);
+    } while (v);
+    return out;
+  };
+  const str = (num: number, s: string): number[] => {
+    const b = [...new TextEncoder().encode(s)];
+    return [...varint((num << 3) | 2), ...varint(b.length), ...b];
+  };
+  const uint = (num: number, v: number): number[] => [...varint(num << 3), ...varint(v)];
+  const W = {
+    sender: "qor1npvwllfr9dqr8erajqqr6s0vxnk2ak55am9g2c",
+    target: "0x000000000000000000000000000000000000dEaD",
+    validator: "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+    valoper1: "qorvaloper19rl4cm2hmr8afy4kldpxz3fka4jguq0a5ws5he",
+    valoper2: "qorvaloper1npvwllfr9dqr8erajqqr6s0vxnk2ak55p70zhk",
+    receiver: "channel-0/cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
+  };
+  const full = [
+    ...str(1, W.sender),
+    ...uint(2, 600),
+    ...uint(3, 10),
+    ...str(4, "25000000"),
+    ...uint(5, 1),
+    ...str(6, W.target),
+    ...str(7, W.validator),
+    ...str(8, W.valoper1),
+    ...str(8, W.valoper2),
+    ...str(9, W.receiver),
+  ];
+
+  it("decodes every field", () => {
+    expect(decodeMessage(TYPE, Uint8Array.from(full))).toEqual({
+      typeUrl: TYPE,
+      fields: {
+        sender: W.sender,
+        blocks: "600",
+        max_txs: "10",
+        max_value: "25000000",
+        native_only: true,
+        allowed_targets: [W.target],
+        validators: [W.validator],
+        staking_validators: [W.valoper1, W.valoper2],
+        ibc_receivers: [W.receiver],
+      },
+      value: null,
+    });
+  });
+  it("still refuses an unknown field 10", () => {
+    expect(codeOf(() => decodeMessage(TYPE, Uint8Array.from([...full, ...str(10, "x")])))).toBe("UNKNOWN_FIELD");
+    expect(codeOf(() => decodeMessage(TYPE, Uint8Array.from([...full, ...uint(10, 1)])))).toBe("UNKNOWN_FIELD");
+  });
+  it("refuses a list field with the wrong wire type", () => {
+    expect(codeOf(() => decodeMessage(TYPE, Uint8Array.from([...full, ...uint(9, 1)])))).toBe("MALFORMED_TX");
+  });
+});

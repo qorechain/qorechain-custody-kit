@@ -22,7 +22,7 @@ Public endpoints are rate-limited and meant for development. Run your own node f
 ## Differences that matter for a rehearsal
 
 - **Gas rule.** The testnet runs v3.2.5 or later, where simulation includes the ML-DSA-87 verification; mainnet does not yet. Use the release check in [withdrawals](withdrawals.md#fees-and-gas) rather than assuming either.
-- **Value-moving precompiles** through EVM windows (v3.2.5 rule) and some precompiles are active on the testnet only.
+- **Precompiles through EVM windows.** The testnet runs v3.2.8: standard precompile methods are refused through a window unless `staking_validators` or `ibc_receivers` admits them, and a key change closes the window (see [signing](signing.md#window-messages)). Some precompiles are active on the testnet only.
 - **Other denominations.** The testnet carries test tokens (bank denoms `erc20:0x…` and an IBC token) that mainnet does not. A deposit scanner must credit `uqor` only on both.
 - **Test funds.** Use the faucet in the [QoreChain dashboard](https://dashboard.qorechain.io) (see the [faucet guide](https://docs.qorechain.io/dashboard/faucet)). Testnet QOR has no value.
 

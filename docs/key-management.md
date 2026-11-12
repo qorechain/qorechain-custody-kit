@@ -38,6 +38,8 @@ Both keys sign:
 
 The rotation transaction itself is a normal hybrid transaction from the account, so its ML-DSA-87 layer is made with the **current** (old) key. Rotation to a key the account used before is refused (code 232). The full node build's command line has `qorechaind tx pqc rotate-key`. Rotate when a key may be exposed, when moving from a software key to an HSM key, or on a schedule your policy sets; read `GET /qorechain/pqc/v1/account/{address}` afterwards.
 
+From v3.2.8, any change of the account's ML-DSA-87 key (`MsgRotatePQCKey`, `MsgMigratePQCKey`, or a `MsgRegisterPQCKeyV2` that replaces the key) closes the account's EVM window and revokes its EIP-7702 consent (`MsgAuthorizeEVMDelegation`). An EVM payout rail stops until you open a new window with the new key; plan the rotation between batches and reopen the window afterwards.
+
 If the **secp256k1** key is exposed, rotating the ML-DSA-87 key is not enough: the address itself is tied to the secp256k1 key. Move the funds to a new address with both keys fresh. Also close any open EVM window (`MsgCloseEVMWindow`), since a window lets the secp256k1 key act alone within its limits.
 
 ## Backups and recovery

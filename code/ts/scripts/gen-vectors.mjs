@@ -187,6 +187,9 @@ const msgOpenWindow = (w) =>
     str(4, w.max_value),
     bool(5, w.native_only),
     ...w.allowed_targets.map((t) => str(6, t)),
+    ...w.validators.map((t) => str(7, t)),
+    ...w.staking_validators.map((t) => str(8, t)),
+    ...w.ibc_receivers.map((t) => str(9, t)),
   );
 
 function signedTx({ name, key, keyType, pubkeyType, pqKey, accountNumber, sequence, message, memo, fields, fee, gas }) {
@@ -264,6 +267,9 @@ const windowFields = {
   max_value: "5000000",
   native_only: true,
   allowed_targets: [],
+  validators: [],
+  staking_validators: [],
+  ibc_receivers: [],
 };
 const transactions = [
   signedTx({
@@ -308,9 +314,25 @@ const targetWindow = {
   max_value: "1",
   native_only: false,
   allowed_targets: ["0x000000000000000000000000000000000000dEaD", ethAddr.hex],
+  validators: [],
+  staking_validators: [],
+  ibc_receivers: [],
+};
+// Every optional field of MsgOpenEVMWindow set (5 to 9), as chain v3.2.8 accepts it.
+const fullWindow = {
+  sender: ethAddr.bech32,
+  blocks: "600",
+  max_txs: "10",
+  max_value: "25000000",
+  native_only: true,
+  allowed_targets: [ethAddr.hex],
+  validators: ["0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789", "0x000000000000000000000000000000000000bEEF"],
+  staking_validators: [valoper, valoper2],
+  ibc_receivers: [`channel-0/${bech32Encode("cosmos", addr.bytes)}`, "channel-7/osmo1receiver"],
 };
 const messages = [
   { typeUrl: "/qorechain.pqc.v1.MsgOpenEVMWindow", bytes: msgOpenWindow(targetWindow), fields: targetWindow },
+  { typeUrl: "/qorechain.pqc.v1.MsgOpenEVMWindow", bytes: msgOpenWindow(fullWindow), fields: fullWindow },
   { typeUrl: "/qorechain.pqc.v1.MsgCloseEVMWindow", bytes: str(1, ethAddr.bech32), fields: { sender: ethAddr.bech32 } },
   {
     typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
@@ -385,6 +407,11 @@ const malformed = [
   { name: "truncated", txBytes: hex(goodTx.subarray(0, goodTx.length - 1)), error: "MALFORMED_TX" },
   { name: "no auth info", txBytes: hex(rawTx(sendBody(new Uint8Array()), null)), error: "MALFORMED_TX" },
   { name: "unknown TxRaw field", txBytes: hex(cat(rawTx(sendBody(new Uint8Array()), smallAuth), uint(4, 1))), error: "UNKNOWN_FIELD" },
+  {
+    name: "unknown MsgOpenEVMWindow field 10",
+    txBytes: hex(rawTx(txBody([{ typeUrl: "/qorechain.pqc.v1.MsgOpenEVMWindow", value: cat(msgOpenWindow(fullWindow), str(10, "x")) }], ""), smallAuth)),
+    error: "UNKNOWN_FIELD",
+  },
   { name: "unknown MsgSend field", txBytes: hex(rawTx(sendBody(str(9, "x")), smallAuth)), error: "UNKNOWN_FIELD" },
   { name: "wrong wire type", txBytes: hex(rawTx(txBody([{ typeUrl: "/cosmos.bank.v1beta1.MsgSend", value: uint(1, 5) }], ""), smallAuth)), error: "MALFORMED_TX" },
   { name: "overlong varint", txBytes: hex(cat(lenField(1, sendBody(new Uint8Array())), lenField(2, smallAuth), tag(4, 0), Uint8Array.from(Array(10).fill(0xff)), Uint8Array.from([0x01]))), error: "MALFORMED_TX" },

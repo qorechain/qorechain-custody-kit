@@ -5,7 +5,8 @@
  *
  * - `MALFORMED_TX`: the bytes are not a well-formed transaction.
  * - `UNKNOWN_FIELD`: a field the decoder does not know, in a structure it decodes
- *   strictly. The network refuses such transactions too.
+ *   strictly. It is not proof the network refuses the transaction: a field added
+ *   by a newer chain version stays unknown until the kit learns it.
  * - `INVALID_ARGUMENT`: a caller error (bad option, bad address for a query).
  */
 export type CustodyKitErrorCode = "MALFORMED_TX" | "UNKNOWN_FIELD" | "INVALID_ARGUMENT";

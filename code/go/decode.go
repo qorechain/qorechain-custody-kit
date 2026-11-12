@@ -143,6 +143,7 @@ var knownMessages = map[string][]fieldSpec{
 	"/qorechain.pqc.v1.MsgOpenEVMWindow": {
 		{1, "sender", kString}, {2, "blocks", kUint}, {3, "max_txs", kUint},
 		{4, "max_value", kString}, {5, "native_only", kBool}, {6, "allowed_targets", kStrings},
+		{7, "validators", kStrings}, {8, "staking_validators", kStrings}, {9, "ibc_receivers", kStrings},
 	},
 	"/qorechain.pqc.v1.MsgCloseEVMWindow": {{1, "sender", kString}},
 }

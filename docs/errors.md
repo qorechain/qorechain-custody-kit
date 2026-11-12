@@ -26,7 +26,7 @@ Decoding is already implemented in the QoreChain SDK: `decodeTxError({ code, cod
 | `pqc` | 234 | key maintenance from a keyed account needs the hybrid signature | sign the rotation hybrid with the current key |
 | `pqc` | 26 | no open EVM authorization window (or no registered key: read the text) | register a key, then open a window |
 | `pqc` | 27 | window exhausted or the transaction is outside its scope | open a new window with suitable limits and scope |
-| `pqc` | 28 | invalid window parameters | `blocks` 1 to 17,280, `max_txs` 1 to 1,000, `max_value` > 0, at most 16 targets |
+| `pqc` | 28 | invalid window parameters | `blocks` 1 to 17,280, `max_txs` 1 to 1,000, `max_value` > 0; each list at most 16 entries, no duplicates, well-formed entries (see [signing](signing.md#window-messages)) |
 | `stakingtier` | 6 | invalid lock amount | at least `min_lock_amount` (10 QOR) |
 | `stakingtier` | 11 | too many open locks | at most 16 |
 | `stakingtier` | 12 | no bonus to claim | nothing has accrued yet |
@@ -36,4 +36,4 @@ The texts above are the registered error descriptions of each module. Some refus
 
 ## Refusals of the kit itself
 
-The code in this repository uses three codes, identical in every language: `MALFORMED_TX` (bytes that are not a well-formed transaction), `UNKNOWN_FIELD` (a field the decoder does not know, which the network would refuse as well) and `INVALID_ARGUMENT`. `validateAddress` never throws; it returns one of the address codes listed in [addresses](addresses.md).
+The code in this repository uses three codes, identical in every language: `MALFORMED_TX` (bytes that are not a well-formed transaction), `UNKNOWN_FIELD` (a field the decoder does not know; a field added by a newer chain version stays unknown until the kit learns it, so do not read it as a network refusal, and do not sign or credit a transaction you cannot read) and `INVALID_ARGUMENT`. `validateAddress` never throws; it returns one of the address codes listed in [addresses](addresses.md).

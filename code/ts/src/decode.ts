@@ -139,6 +139,9 @@ export const KNOWN_MESSAGES: Readonly<Record<string, [number, string, Kind][]>> 
     [4, "max_value", "string"],
     [5, "native_only", "bool"],
     [6, "allowed_targets", "strings"],
+    [7, "validators", "strings"],
+    [8, "staking_validators", "strings"],
+    [9, "ibc_receivers", "strings"],
   ],
   "/qorechain.pqc.v1.MsgCloseEVMWindow": [[1, "sender", "string"]],
 };
